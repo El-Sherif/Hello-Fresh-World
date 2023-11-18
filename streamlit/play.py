@@ -2,6 +2,12 @@ import streamlit as st
 from datetime import datetime
 from text_generation import generate_response, run_rekognition_prompt
 from image_recognition import run_rekognition
+from text_generation import generate_recipe , generate_recipe_dyn
+from audiorecorder import audiorecorder
+from Models.Voice_To_Text_Local import transcribe_audio_wav2vec
+from Models.Voice_To_Emotion_Local import query
+from Models.Text_To_Voice_Local import text_to_speech
+from prompt_store import get_prompt_2
 
 # Define your questions and options
 question1 = "Do you have any food allergies?"
@@ -13,11 +19,19 @@ options2 = ["Dog", "Cat", "Bird"]
 question3 = "How would you describe your cooking skills?"
 options3 = ["Begginer", "Medium", "Expert"]
 
+# Initialize session state variables
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 
 if 'vision_history' not in st.session_state:
     st.session_state.vision_history = []
+
+if 'audio_processed' not in st.session_state:
+    st.session_state.audio_processed = False
+
+if 'recipe_generated' not in st.session_state:
+    st.session_state.recipe_generated = False
+
 
 # Function to display questions
 def display_questions():
@@ -76,6 +90,31 @@ else:
         st.session_state.vision_history = []
 
     with tab3:
-        st.header("An owl")
-        st.image("https://static.streamlit.io/examples/owl.jpg", width=200)
+        st.title('Voice Recording and Playback')
+        st.title("Audio Recorder")
+        audio = audiorecorder("Click to record", "Click to stop recording")
+
+        if len(audio) > 0 and not st.session_state.audio_processed:
+            # Process audio only once
+            st.audio(audio.export().read())  
+            audio.export("audio.wav", format="wav")
+            st.write(f"Frame rate: {audio.frame_rate}, Frame width: {audio.frame_width}, Duration: {audio.duration_seconds} seconds")
+
+            transcription = transcribe_audio_wav2vec('audio.wav')
+            emotion = query('audio.wav')[0]['label']
+            
+            prompt = get_prompt_2(emotion, transcription)
+            recipe = generate_recipe_dyn(prompt)
+            st.session_state.recipe = recipe  # Save recipe to session state
+            st.session_state.audio_processed = True
+
+        if st.session_state.audio_processed and not st.session_state.recipe_generated:
+            st.success("Here's your personalized recipe:")
+            st.write(st.session_state.recipe)
+
+        if st.button('Play Audio') and st.session_state.audio_processed:
+            text_to_speech(st.session_state.recipe)
+            st.audio("output.wav", format='audio/wav')
+            st.session_state.recipe_generated = True
+
 

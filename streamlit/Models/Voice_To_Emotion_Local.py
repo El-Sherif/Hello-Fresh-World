@@ -2,7 +2,7 @@ import requests
 
 # Hardcode the API URL and Authorization Token
 API_URL = "https://api-inference.huggingface.co/models/ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition"
-AUTH_TOKEN = "your-huggingface-api-token"  # Replace with your actual token
+AUTH_TOKEN = {"Authorization": "Bearer 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"}  # Replace with your actual token
 
 def query(filename):
     """
