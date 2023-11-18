@@ -1,10 +1,9 @@
 from openai import OpenAI
-client = OpenAI()
 from prompt_store import get_prompt_1
 
 def generate_recipe(age, gender, mood):
     # Your OpenAI API key
-    client = OpenAI(api_key='key')
+    client = OpenAI(api_key='')
 
     # Constructing the prompt
     prompt_text = get_prompt_1(age, gender, mood)
