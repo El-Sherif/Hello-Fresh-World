@@ -1,12 +1,21 @@
 import streamlit as st
-from text_generation import generate_recipe
+from text_generation import generate_recipe , generate_recipe_dyn
 from image_recognition import run_rekognition
 import time
 import boto3
 import os
 from audiorecorder import audiorecorder
 from Models.Voice_To_Text_Local import transcribe_audio_wav2vec
+from Models.Voice_To_Emotion_Local import query
+from Models.Text_To_Voice_Local import text_to_speech
+from prompt_store import get_prompt_2
 
+# Initialize session state variables
+if 'audio_processed' not in st.session_state:
+    st.session_state.audio_processed = False
+
+if 'recipe_generated' not in st.session_state:
+    st.session_state.recipe_generated = False
 
 
 # Set page config for custom theme
@@ -98,18 +107,28 @@ def voice_recording():
     st.title("Audio Recorder")
     audio = audiorecorder("Click to record", "Click to stop recording")
 
-    if len(audio) > 0:
-        # To play audio in frontend:
+    if len(audio) > 0 and not st.session_state.audio_processed:
+        # Process audio only once
         st.audio(audio.export().read())  
-
-        # To save audio to a file, use pydub export method:
         audio.export("audio.wav", format="wav")
-
-        # To get audio properties, use pydub AudioSegment properties:
         st.write(f"Frame rate: {audio.frame_rate}, Frame width: {audio.frame_width}, Duration: {audio.duration_seconds} seconds")
 
         transcription = transcribe_audio_wav2vec('audio.wav')
-        print(transcription)
+        emotion = query('audio.wav')[0]['label']
+        
+        prompt = get_prompt_2(emotion, transcription)
+        recipe = generate_recipe_dyn(prompt)
+        st.session_state.recipe = recipe  # Save recipe to session state
+        st.session_state.audio_processed = True
+
+    if st.session_state.audio_processed and not st.session_state.recipe_generated:
+        st.success("Here's your personalized recipe:")
+        st.write(st.session_state.recipe)
+
+    if st.button('Play Audio') and st.session_state.audio_processed:
+        text_to_speech(st.session_state.recipe)
+        st.audio("output.wav", format='audio/wav')
+        st.session_state.recipe_generated = True
 
 def camera_interaction():
     st.title('Camera Interaction')

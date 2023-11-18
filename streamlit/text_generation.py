@@ -19,3 +19,19 @@ def generate_recipe(age, gender, mood):
 )
 
     return response.choices[0].message.content
+
+
+def generate_recipe_dyn(prompt_text):
+    print('insde dyn recipe generation func')
+    # Your OpenAI API key
+    client = OpenAI(api_key='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')
+
+    response = client.chat.completions.create(
+  model="gpt-4-1106-preview",
+  messages=[
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": f"{prompt_text}"}
+  ]
+)
+
+    return response.choices[0].message.content

@@ -19,12 +19,12 @@ def get_prompt_1(age, gender, mood):
         - ingredients\
         - recipe steps"
 
-def get_prompt_2(mood):
+def get_prompt_2(mood, transcript):
     return f"Role: You are a virtual culinary assistant, and your goal is to recommend \
         a delicious dish tailored to the unique preferences and characteristics \
-        of the user. The user will provide their gender, age, and current mood \
-        expressed with an emoji. Craft a personalized recipe suggestion and \
-        present it with step-by-step instructions.\
+        of the user. The user will provide their current mood \
+        Craft a personalized recipe suggestion and \
+        present it with step-by-step instructions. And if there are any numbers in your response, convert them to text,like instead of 2 teaspons of suger, just write two teaspons of suger.\
         For example, if the user states,\
         I feel {mood},\" consider the user's mood to \
         recommend a dish that aligns with their likely taste preferences and \
@@ -32,9 +32,8 @@ def get_prompt_2(mood):
         ensuring the user can easily follow along and enjoy a satisfying cooking \
         experience. Be attentive to dietary restrictions, if mentioned, and \
         incorporate flavors and ingredients that resonate with the user's \
-        profile. response as the response below, no additional text.\
-        Prompt: I feel {mood}. I want you to \
-        recommend me a dish to cook with its recipe step by step.\
+        profile. response as the response below, no additional text, and if there are any numbers in your response, convert them to text, like instead of 2 teaspons of suger, just write two teaspons of suger.\
+        Prompt: I feel {mood}. {transcript} \
         response:\
         - meal name\
         - ingredients\
