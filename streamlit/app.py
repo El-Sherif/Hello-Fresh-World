@@ -1,7 +1,8 @@
 import streamlit as st
 from text_generation import generate_recipe
+from image_recognition import run_rekognition
 import time
-
+import boto3
 import os
 
 # Set page config for custom theme
@@ -97,11 +98,13 @@ def camera_interaction():
     st.markdown("## Take a picture")
     st.markdown("Please use your camera to take a picture, then upload it here.")
 
-    uploaded_image = st.file_uploader("Upload Image", type=['jpg', 'jpeg', 'png'])
+    picture = st.camera_input("Take a picture")
+    picture = picture.getvalue()
 
-    if uploaded_image is not None:
-        # Display the image
-        st.image(uploaded_image, caption="Uploaded Image.")
+    if picture:
+        res = run_rekognition(picture)
+        st.write(res)
+
 
 # Main app logic
 page = st.experimental_get_query_params().get("page", ["main_page"])[0]
