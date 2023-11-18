@@ -9,3 +9,11 @@ def transcribe_audio(file_path):
             response_format="text"
         )
     return transcript
+
+# Usage
+
+# from Voice_To_Text(OpenAI) import transcribe_audio
+# audio_transcript = transcribe_audio('path/to/audio.mp3')
+
+# print(audio_transcript)
+
