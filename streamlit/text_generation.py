@@ -1,7 +1,9 @@
 from openai import OpenAI
 from prompt_store import get_prompt_1
 
+
 def generate_recipe(age, gender, mood):
+    print('insde recipe generation func')
     # Your OpenAI API key
     client = OpenAI(api_key='')
 
@@ -17,13 +19,3 @@ def generate_recipe(age, gender, mood):
 )
 
     return response.choices[0].message.content
-
-
-
-# Example usage
-age = "write your age"
-gender = "your gender"
-mood = "what do you feel"
-
-recipe = generate_recipe(age, gender, mood)
-print(recipe)
