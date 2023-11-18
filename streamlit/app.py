@@ -1,8 +1,11 @@
 import streamlit as st
 from text_generation import generate_recipe
 import time
-
 import os
+from audiorecorder import audiorecorder
+from Models.Voice_To_Text_Local import transcribe_audio_wav2vec
+
+
 
 # Set page config for custom theme
 st.set_page_config(
@@ -90,7 +93,21 @@ def text_input_output():
 
 def voice_recording():
     st.title('Voice Recording and Playback')
-    # ... [code to handle voice recording and playback]
+    st.title("Audio Recorder")
+    audio = audiorecorder("Click to record", "Click to stop recording")
+
+    if len(audio) > 0:
+        # To play audio in frontend:
+        st.audio(audio.export().read())  
+
+        # To save audio to a file, use pydub export method:
+        audio.export("audio.wav", format="wav")
+
+        # To get audio properties, use pydub AudioSegment properties:
+        st.write(f"Frame rate: {audio.frame_rate}, Frame width: {audio.frame_width}, Duration: {audio.duration_seconds} seconds")
+
+        transcription = transcribe_audio_wav2vec('audio.wav')
+        print(transcription)
 
 def camera_interaction():
     st.title('Camera Interaction')

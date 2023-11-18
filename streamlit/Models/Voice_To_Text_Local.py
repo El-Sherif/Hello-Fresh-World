@@ -18,7 +18,6 @@ def read_audio(file_path, target_sample_rate=16000):
 def transcribe_audio_wav2vec(file_path):
     audio_input, sample_rate = read_audio(file_path)
     input_values = processor(audio_input, sampling_rate=sample_rate, return_tensors="pt").input_values
-
     logits = model(input_values).logits
     predicted_ids = torch.argmax(logits, dim=-1)
     transcription = processor.decode(predicted_ids[0])
@@ -31,6 +30,6 @@ def transcribe_audio_wav2vec(file_path):
 # # main.py or any other file where you want to use this functionality
 # from Voice_To_Text(Local) import transcribe_audio_wav2vec
 
-# file_path = 'path/to/audio_file.wav'  # Replace with your audio file path
+# file_path = 'Check.wav'  # Replace with your audio file path
 # transcription = transcribe_audio_wav2vec(file_path)
 # print(transcription)
