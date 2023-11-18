@@ -133,7 +133,6 @@ def voice_recording():
 def camera_interaction():
     st.title('Camera Interaction')
     st.markdown("## Take a picture")
-    st.markdown("Please use your camera to take a picture, then upload it here.")
 
     picture = st.camera_input("Take a picture")
     picture = picture.getvalue()
