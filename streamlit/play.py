@@ -2,7 +2,6 @@ import streamlit as st
 from datetime import datetime
 from text_generation import generate_response, run_rekognition_prompt
 from image_recognition import run_rekognition
-<<<<<<< Updated upstream
 from text_generation import generate_recipe , generate_recipe_dyn
 from audiorecorder import audiorecorder
 from Models.Voice_To_Text_Local import transcribe_audio_wav2vec
@@ -10,10 +9,8 @@ from Models.Voice_To_Emotion_Local import query
 from Models.Text_To_Voice_Local import text_to_speech
 from prompt_store import get_prompt_2
 
-=======
 from streamlit_tags import st_tags, st_tags_sidebar
 import os
->>>>>>> Stashed changes
 # Define your questions and options
 question1 = "Do you have any food allergies?"
 options1 = ["dairy-free", "Blue", "Green"]
@@ -31,13 +28,11 @@ if 'chat_history' not in st.session_state:
 if 'vision_history' not in st.session_state:
     st.session_state.vision_history = []
 
-<<<<<<< Updated upstream
 if 'audio_processed' not in st.session_state:
     st.session_state.audio_processed = False
 
 if 'recipe_generated' not in st.session_state:
     st.session_state.recipe_generated = False
-=======
 # Function to load images
 def load_images(folder_path):
     images = []
@@ -89,7 +84,6 @@ def display_personas():
     
     display_images()
     
->>>>>>> Stashed changes
 
 
 # Function to display questions
