@@ -7,7 +7,7 @@ def run_rekognition_prompt(emotion):
     client = OpenAI(api_key='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')
     prompt_text = rekognition_prompt(emotion)
     response = client.chat.completions.create(
-    model="gpt-3.5-turbo",
+    model="gpt-4-1106-preview",
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": f"{prompt_text}"}
@@ -29,7 +29,7 @@ def chat(user_input):
     prompt_text = user_input
 
     response = client.chat.completions.create(
-  model="gpt-3.5-turbo",
+  model="gpt-4-1106-preview",
   messages=[
     {"role": "system", "content": "You are a helpful assistant."},
     {"role": "user", "content": f"{prompt_text}"}
@@ -49,7 +49,7 @@ def generate_recipe(age, gender, mood):
     prompt_text = get_prompt_1(age, gender, mood)
 
     response = client.chat.completions.create(
-  model="gpt-3.5-turbo",
+  model="gpt-4-1106-preview",
   messages=[
     {"role": "system", "content": "You are a helpful assistant."},
     {"role": "user", "content": f"{prompt_text}"}
