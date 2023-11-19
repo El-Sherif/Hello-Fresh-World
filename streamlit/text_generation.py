@@ -3,14 +3,15 @@ from prompt_store import get_prompt_1, rekognition_prompt
 
 
 
-def run_rekognition_prompt(emotion):
+def run_rekognition_prompt(prompt):
     client = OpenAI(api_key='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')
+    emotion, persona, props = prompt
     prompt_text = rekognition_prompt(emotion)
     response = client.chat.completions.create(
     model="gpt-4-1106-preview",
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": f"{prompt_text}"}
+        {"role": "user", "content": f"You are a helpful assistant. you are helping a guy find a recipe, the guy has a persona {persona} that consists of {props}, make sure to tell him you know these propoerties and his persona. the prompt is: {prompt_text}"}
     ]
     )
     return response.choices[0].message.content
@@ -26,13 +27,13 @@ def chat(user_input):
     client = OpenAI(api_key='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')
 
     # Constructing the prompt
-    prompt_text = user_input
+    prompt_text, persona, props = user_input
 
     response = client.chat.completions.create(
   model="gpt-4-1106-preview",
   messages=[
     {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": f"{prompt_text}"}
+    {"role": "user", "content": f"You are a helpful assistant. you are helping a guy find a recipe, the guy has a persona {persona} that consists of {props}, make sure to tell him you know these propoerties and his persona. the prompt is: {prompt_text}"}
   ]
 )
 

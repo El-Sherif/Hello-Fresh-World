@@ -54,8 +54,9 @@ def load_images(folder_path):
 def handle_click(image_index):
     # Redirect to home page with the image index
     d = {0:'junkie mood', 1:'healthy mood'}
+    props = {0:['feeling sad', 'comfort food', 'junk food', 'sugar'], 1:['feeling healthy', 'healthy food', 'balanced food', 'workout']}
     st.session_state['selected_persona'] = d[image_index]
-    st.write(f"Selected image index: {image_index}")
+    st.session_state['props'] = props[image_index]
 
 # Display images in a grid
 def display_images():
@@ -130,7 +131,8 @@ else:
                 user_message = f"You ({timestamp}): {user_input}"
                 st.session_state.chat_history.append(user_message)
                 # Dummy AI Response
-                response = generate_response(user_input)
+                prompt = user_input, st.session_state["selected_persona"], st.session_state["props"]
+                response = generate_response(prompt)
                 ai_response = f"AI ({timestamp}): {response}."
                 st.session_state.chat_history.append(ai_response)
                 response = client.images.generate(
@@ -157,8 +159,8 @@ else:
         if picture:
             picture = picture.getvalue()
             res = run_rekognition(picture)
-            print(res)
-            ai_res = run_rekognition_prompt(res[0]['emotion'])
+            prompt = res[0]['emotion'], st.session_state["selected_persona"], st.session_state["props"]
+            ai_res = run_rekognition_prompt(prompt)
             st.write(f"I can see you feel {res[0]['emotion']}")
             st.session_state.vision_history.append(f"I can see you feel {res[0]['emotion']}")
             st.session_state.vision_history.append(ai_res)
