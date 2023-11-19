@@ -196,7 +196,7 @@ else:
             transcription = transcribe_audio_wav2vec('audio.wav')
             emotion = query('audio.wav')[0]['label']
             
-            prompt = get_prompt_2(emotion, transcription)
+            prompt = get_prompt_2(emotion, transcription, st.session_state['selected_persona'])
             recipe = generate_recipe_dyn(prompt)
             st.session_state.recipe = recipe  # Save recipe to session state
             st.session_state.audio_processed = True
@@ -275,7 +275,7 @@ else:
                             "role": "user",
                             "content": [
                                  {"type": "text", "text": f"can you please recommend a recipe of {recipe_name} \
-                                 using the ingridents listed here :{ingredients}, \
+                                 using the ingridents listed here :{ingredients}, knowing that I have a {st.session_state['selected_persona']} persona \
                                  and in case they are not enough, mention the missing ones,\
                                 such that \
                                  response:\
