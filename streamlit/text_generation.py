@@ -4,7 +4,7 @@ from prompt_store import get_prompt_1, rekognition_prompt
 
 
 def run_rekognition_prompt(prompt):
-    client = OpenAI(api_key='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')
+    client = OpenAI(api_key='sk-OPENAPIKEY')
     emotion, persona, props = prompt
     prompt_text = rekognition_prompt(emotion)
     response = client.chat.completions.create(
@@ -24,7 +24,7 @@ def generate_response(*args):
 def chat(user_input):
     print('insde recipe generation func')
     # Your OpenAI API key
-    client = OpenAI(api_key='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')
+    client = OpenAI(api_key='sk-OPENAPIKEY')
 
     # Constructing the prompt
     prompt_text, persona, props = user_input
@@ -44,7 +44,7 @@ def chat(user_input):
 def generate_recipe(age, gender, mood):
     print('insde recipe generation func')
     # Your OpenAI API key
-    client = OpenAI(api_key='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')
+    client = OpenAI(api_key='sk-OPENAPIKEY')
 
     # Constructing the prompt
     prompt_text = get_prompt_1(age, gender, mood)
@@ -63,7 +63,7 @@ def generate_recipe(age, gender, mood):
 def generate_recipe_dyn(prompt_text):
     print('insde dyn recipe generation func')
     # Your OpenAI API key
-    client = OpenAI(api_key='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')
+    client = OpenAI(api_key='sk-OPENAPIKEY')
 
     response = client.chat.completions.create(
   model="gpt-4-1106-preview",

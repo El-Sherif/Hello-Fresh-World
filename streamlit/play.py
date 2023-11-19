@@ -14,7 +14,7 @@ import base64
 import requests
 import json
 from openai import OpenAI
-client = OpenAI(api_key='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')
+client = OpenAI(api_key='sk-OPENAPIKEY')
 # Function to encode the image to base64
 def encode_image(uploaded_file):
     return base64.b64encode(uploaded_file.getvalue()).decode('utf-8')
@@ -231,7 +231,7 @@ else:
             base64_image = encode_image(uploaded_file)
 
             # OpenAI API Key
-            api_key = "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"
+            api_key = "sk-OPENAPIKEY"
 
             if api_key:
 
