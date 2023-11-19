@@ -2,18 +2,21 @@ import streamlit as st
 from datetime import datetime
 from text_generation import generate_response, run_rekognition_prompt
 from image_recognition import run_rekognition
-<<<<<<< Updated upstream
 from text_generation import generate_recipe , generate_recipe_dyn
 from audiorecorder import audiorecorder
 from Models.Voice_To_Text_Local import transcribe_audio_wav2vec
 from Models.Voice_To_Emotion_Local import query
 from Models.Text_To_Voice_Local import text_to_speech
 from prompt_store import get_prompt_2
-
-=======
 from streamlit_tags import st_tags, st_tags_sidebar
 import os
->>>>>>> Stashed changes
+import base64
+import requests
+import json
+# Function to encode the image to base64
+def encode_image(uploaded_file):
+    return base64.b64encode(uploaded_file.getvalue()).decode('utf-8')
+
 # Define your questions and options
 question1 = "Do you have any food allergies?"
 options1 = ["dairy-free", "Blue", "Green"]
@@ -31,13 +34,12 @@ if 'chat_history' not in st.session_state:
 if 'vision_history' not in st.session_state:
     st.session_state.vision_history = []
 
-<<<<<<< Updated upstream
 if 'audio_processed' not in st.session_state:
     st.session_state.audio_processed = False
 
 if 'recipe_generated' not in st.session_state:
     st.session_state.recipe_generated = False
-=======
+
 # Function to load images
 def load_images(folder_path):
     images = []
@@ -89,7 +91,6 @@ def display_personas():
     
     display_images()
     
->>>>>>> Stashed changes
 
 
 # Function to display questions
@@ -113,7 +114,7 @@ if "selected_persona" not in st.session_state or not st.session_state["selected_
 else:
     # Display the main page with the answers
     st.write(f"## you are using the {st.session_state['selected_persona']} persona")
-    tab1, tab2, tab3 = st.tabs(["chat", "camera", "talk"])
+    tab1, tab2, tab3, tab4 = st.tabs(["chat", "camera", "talk", "fridge"])
     with tab1:
        
         with st.form("chat_form", clear_on_submit=True):
@@ -179,5 +180,77 @@ else:
             text_to_speech(st.session_state.recipe)
             st.audio("output.wav", format='audio/wav')
             st.session_state.recipe_generated = True
+    with tab4:
+        st.title("Image Analysis with OpenAI API")
 
+        # File uploader
+        uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+
+        if uploaded_file is not None:
+            # Convert the uploaded file to base64
+            base64_image = encode_image(uploaded_file)
+
+            # OpenAI API Key
+            api_key = "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"
+
+            if api_key:
+
+                headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {api_key}"
+                }
+
+                payload = {
+                    "model": "gpt-4-vision-preview",
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": [
+                                {"type": "text", "text": "Can you please list the ingredients in the image and nothing else?\
+                                if some stuff is not very clear it is ok, just to the best of your knowledge and only list them'\
+                                without writing anything else please"},
+                                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+                            ]
+                        }
+                    ],
+                    "max_tokens": 300
+                }
+
+                # Send the request
+                response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+
+                # Display the response
+                if response.status_code == 200:
+                    ingredients = response.json()['choices'][0]['message']['content']
+                    st.write(ingredients)
+                    # Add buttons for recipe suggestions
+                    recipe_name = st.text_input("Enter the recipe name")
+                    SuggestRecipeButton = st.button('Suggest a Recipe')
+
+                    if SuggestRecipeButton:
+                        payload2 = {
+                    "model": "gpt-4-vision-preview",
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": [
+                                 {"type": "text", "text": f"can you please recommend a recipe of {recipe_name} \
+                                 using the ingridents listed here :{ingredients}, \
+                                 and in case they are not enough, mention the missing ones,\
+                                such that \
+                                 response:\
+                                - meal name\
+                                - Already available ingredients\
+                                - Missing ingredients (if any)\
+                                - recipe steps"
+                                }
+                            ]
+                        }
+                    ],
+                    "max_tokens": 300
+                    }
+                        responseX = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload2)
+                        st.write(responseX.json()['choices'][0]['message']['content'])
+            else:
+                st.error("Error in API request")
 
