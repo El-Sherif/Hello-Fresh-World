@@ -13,6 +13,8 @@ import os
 import base64
 import requests
 import json
+
+
 # Function to encode the image to base64
 def encode_image(uploaded_file):
     return base64.b64encode(uploaded_file.getvalue()).decode('utf-8')
