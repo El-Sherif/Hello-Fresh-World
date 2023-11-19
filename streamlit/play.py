@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import datetime
 from text_generation import generate_response, run_rekognition_prompt
 from image_recognition import run_rekognition
+<<<<<<< Updated upstream
 from text_generation import generate_recipe , generate_recipe_dyn
 from audiorecorder import audiorecorder
 from Models.Voice_To_Text_Local import transcribe_audio_wav2vec
@@ -9,15 +10,19 @@ from Models.Voice_To_Emotion_Local import query
 from Models.Text_To_Voice_Local import text_to_speech
 from prompt_store import get_prompt_2
 
+=======
+from streamlit_tags import st_tags, st_tags_sidebar
+import os
+>>>>>>> Stashed changes
 # Define your questions and options
 question1 = "Do you have any food allergies?"
-options1 = ["Red", "Blue", "Green"]
+options1 = ["dairy-free", "Blue", "Green"]
 
 question2 = "Do you follow any of these diets?"
-options2 = ["Dog", "Cat", "Bird"]
+options2 = ["Vegan", "Vegeterian", "Keto", "High Protein"]
 
 question3 = "How would you describe your cooking skills?"
-options3 = ["Begginer", "Medium", "Expert"]
+options3 = ["Begginer", "Intermediate", "Expert"]
 
 # Initialize session state variables
 if 'chat_history' not in st.session_state:
@@ -26,11 +31,65 @@ if 'chat_history' not in st.session_state:
 if 'vision_history' not in st.session_state:
     st.session_state.vision_history = []
 
+<<<<<<< Updated upstream
 if 'audio_processed' not in st.session_state:
     st.session_state.audio_processed = False
 
 if 'recipe_generated' not in st.session_state:
     st.session_state.recipe_generated = False
+=======
+# Function to load images
+def load_images(folder_path):
+    images = []
+    for filename in os.listdir(folder_path):
+        if filename.endswith(".jpg") or filename.endswith(".png"): # Add more formats if needed
+            images.append(filename)
+    return images
+
+# Function to handle button click
+def handle_click(image_index):
+    # Redirect to home page with the image index
+    d = {0:'junkie mood', 1:'healthy mood'}
+    st.session_state['selected_persona'] = d[image_index]
+    st.write(f"Selected image index: {image_index}")
+
+# Display images in a grid
+def display_images():
+    images = ["./personas/junky.png", "./personas/healthy.png"]
+    # Check if selected_image is already in session state
+    if 'selected_image' not in st.session_state:
+        st.session_state['selected_image'] = None
+
+    # Display images with buttons
+    st.write('## Choose from existing personas')
+    for index, image in enumerate(images):
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.image(image, width=300)  # Adjust width as necessary
+        with col2:
+            unique_key = f"select_button_{index}"
+            st.button("Select", key=unique_key, on_click=handle_click, args=(index,))
+
+    # Display selected image index
+    if st.session_state['selected_image'] is not None:
+        st.write(f"You have selected image {st.session_state['selected_image']}")
+
+def display_personas():
+    keywords = st_tags(
+        label='# Create new persona:',
+        text='Press enter to add more',
+        value=['High protein', 'gym buddy', 'low fat'],
+        suggestions=['five', 'six', 'seven', 
+                    'eight', 'nine', 'three', 
+                    'eleven', 'ten', 'four'],
+        maxtags = 20,
+        key='1')
+    st.button("Create", type="primary")
+
+    
+    display_images()
+    
+>>>>>>> Stashed changes
 
 
 # Function to display questions
@@ -49,10 +108,11 @@ def display_questions():
         st.session_state["questions_answered"] = True
 
 # Check if the questions have been answered
-if "questions_answered" not in st.session_state or not st.session_state["questions_answered"]:
-    display_questions()
+if "selected_persona" not in st.session_state or not st.session_state["selected_persona"]:
+    display_personas()
 else:
     # Display the main page with the answers
+    st.write(f"## you are using the {st.session_state['selected_persona']} persona")
     tab1, tab2, tab3 = st.tabs(["chat", "camera", "talk"])
     with tab1:
        
@@ -73,6 +133,8 @@ else:
             with st.chat_message("User"):
                 for message in st.session_state.chat_history:
                     st.text(message)
+            st.balloons()
+
     with tab2:
         picture = st.camera_input("Take a picture")
 
@@ -88,6 +150,7 @@ else:
           for message in st.session_state.vision_history:
                 st.text(message)
         st.session_state.vision_history = []
+        st.balloons()
 
     with tab3:
         st.title('Voice Recording and Playback')
