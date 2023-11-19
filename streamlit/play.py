@@ -13,8 +13,8 @@ import os
 import base64
 import requests
 import json
-
-
+from openai import OpenAI
+client = OpenAI(api_key='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')
 # Function to encode the image to base64
 def encode_image(uploaded_file):
     return base64.b64encode(uploaded_file.getvalue()).decode('utf-8')
@@ -133,10 +133,23 @@ else:
                 response = generate_response(user_input)
                 ai_response = f"AI ({timestamp}): {response}."
                 st.session_state.chat_history.append(ai_response)
+                response = client.images.generate(
+                        model="dall-e-3",
+                        prompt=f"Can you please generate an image of the following meal/reciepe mentioned here if any? {user_input}",
+                        size="1024x1024",
+                        quality="standard",
+                        n=1,
+                        )
+                image_url = response.data[0].url
+                st.image(
+                    image_url,
+                    width=400, # Manually Adjust the width of the image as per requirement
+                )
             with st.chat_message("User"):
                 for message in st.session_state.chat_history:
                     st.text(message)
             st.balloons()
+            
 
     with tab2:
         picture = st.camera_input("Take a picture")
@@ -149,6 +162,18 @@ else:
             st.write(f"I can see you feel {res[0]['emotion']}")
             st.session_state.vision_history.append(f"I can see you feel {res[0]['emotion']}")
             st.session_state.vision_history.append(ai_res)
+            response = client.images.generate(
+                        model="dall-e-3",
+                        prompt=f"Can you please generate an image of the following meal/reciepe mentioned here if any? {ai_res}",
+                        size="1024x1024",
+                        quality="standard",
+                        n=1,
+                        )
+            image_url = response.data[0].url
+            st.image(
+                image_url,
+                width=400, # Manually Adjust the width of the image as per requirement
+            )
         with st.chat_message("User"):
           for message in st.session_state.vision_history:
                 st.text(message)
@@ -177,7 +202,18 @@ else:
         if st.session_state.audio_processed and not st.session_state.recipe_generated:
             st.success("Here's your personalized recipe:")
             st.write(st.session_state.recipe)
-
+            response = client.images.generate(
+                        model="dall-e-3",
+                        prompt=f"Can you please generate an image of the following meal/reciepe mentioned here if any? {recipe}",
+                        size="1024x1024",
+                        quality="standard",
+                        n=1,
+                        )
+            image_url = response.data[0].url
+            st.image(
+                image_url,
+                width=400, # Manually Adjust the width of the image as per requirement
+            )
         if st.button('Play Audio') and st.session_state.audio_processed:
             text_to_speech(st.session_state.recipe)
             st.audio("output.wav", format='audio/wav')
@@ -253,6 +289,18 @@ else:
                     }
                         responseX = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload2)
                         st.write(responseX.json()['choices'][0]['message']['content'])
-            else:
-                st.error("Error in API request")
+                        response = client.images.generate(
+                        model="dall-e-3",
+                        prompt=f"Can you please generate an image of the following meal/reciepe? {recipe_name}",
+                        size="1024x1024",
+                        quality="standard",
+                        n=1,
+                        )
+                        image_url = response.data[0].url
+                        st.image(
+                            image_url,
+                            width=400, # Manually Adjust the width of the image as per requirement
+                        )
+                else:
+                    st.error("Error in API request")
 
